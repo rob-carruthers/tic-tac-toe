@@ -5,6 +5,8 @@ body {
   justify-content: center;
   height: 100vh;
   font-family: "Ubuntu";
+  margin: 0;
+  padding: 0;
 }
 
 #gameBoard {
