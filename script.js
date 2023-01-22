@@ -14,6 +14,10 @@ const gameBoard = (() => {
     playing = true;
   };
 
+  const resetBoard = () => {
+    board.fill("");
+  };
+
   const checkForWin = () => {
     const winCombos = [
       [0, 1, 2],
@@ -34,6 +38,12 @@ const gameBoard = (() => {
           player.name.repeat(3)
         ) {
           const resultDiv = document.getElementById("resultDiv");
+
+          combo.forEach((n) => {
+            const square = document.getElementById(n);
+            square.style.backgroundColor = "rgb(140, 250, 156)";
+          });
+
           resultDiv.textContent = player.name + " wins!";
           resultDiv.style.display = "flex";
           playing = false;
@@ -50,6 +60,7 @@ const gameBoard = (() => {
     currentPlayerIndex,
     checkForWin,
     setPlaying,
+    resetBoard,
   };
 })();
 
@@ -83,11 +94,13 @@ const displayController = (() => {
   };
 
   const reset = () => {
-    gameBoard.board = new Array(9).fill("");
+    gameBoard.resetBoard();
     for (let square of document.getElementsByClassName("boardSquare")) {
       square.innerHTML = "";
+      square.style.backgroundColor = "white";
     }
     gameBoard.setPlaying();
+    gameBoard.currentPlayerIndex = 0;
     const resultDiv = document.getElementById("resultDiv");
     resultDiv.style.display = "none";
   };
