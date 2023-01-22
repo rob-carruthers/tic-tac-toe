@@ -10,6 +10,10 @@ const gameBoard = (() => {
 
   const isPlaying = () => playing;
 
+  const setPlaying = () => {
+    playing = true;
+  };
+
   const checkForWin = () => {
     const winCombos = [
       [0, 1, 2],
@@ -45,6 +49,7 @@ const gameBoard = (() => {
     players,
     currentPlayerIndex,
     checkForWin,
+    setPlaying,
   };
 })();
 
@@ -62,7 +67,8 @@ const displayController = (() => {
 
       gridItem.addEventListener("click", (event) => {
         if (event.target.textContent === "" && gameBoard.isPlaying()) {
-          event.target.innerHTML = "<p>" +
+          event.target.innerHTML =
+            "<p>" +
             gameBoard.players[gameBoard.currentPlayerIndex].name +
             "</p>";
           gameBoard.board[event.target.id] = event.target.textContent;
@@ -75,6 +81,19 @@ const displayController = (() => {
       counter++;
     });
   };
+
+  const reset = () => {
+    gameBoard.board = new Array(9).fill("");
+    for (let square of document.getElementsByClassName("boardSquare")) {
+      square.innerHTML = "";
+    }
+    gameBoard.setPlaying();
+    const resultDiv = document.getElementById("resultDiv");
+    resultDiv.style.display = "none";
+  };
+
+  const resetButton = document.getElementById("resetButton");
+  resetButton.addEventListener("click", reset);
 
   return { render };
 })();

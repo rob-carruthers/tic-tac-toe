@@ -1,11 +1,14 @@
+:root {
+  font-family: "Ubuntu";
+}
+
 body {
   background-color: rgb(240, 240, 240);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 5px;
   align-items: center;
   height: 100vh;
-  font-family: "Ubuntu";
   margin: 0;
   padding: 0;
 }
@@ -25,7 +28,7 @@ body {
   font-weight: bold;
   gap: 4px;
   padding: 10px;
-  margin-top: 30px;
+  margin-top: 10px;
   border-radius: 10px;
   background-color: rgb(138, 168, 177);
   width: 50%;
@@ -58,9 +61,24 @@ body {
   animation: fadeIn 0.5s;
   font-size: 2em;
   font-weight: bolder;
+  background-color: rgb(120, 240, 136);
+  border-radius: 15px;
+  border: 3px solid black;
+}
+
+#resetButton {
+  margin-top: 10px;
+  padding: 10px;
+  font-size: 1.2em;
+  font-weight: bolder;
   background-color: white;
   border-radius: 15px;
   border: 3px solid black;
+  cursor: pointer;
+}
+
+#resetButton:hover {
+  background-color: rgb(219, 219, 219);
 }
 
 @keyframes fadeIn {
