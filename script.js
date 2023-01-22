@@ -45,12 +45,13 @@ const gameBoard = (() => {
             square.style.backgroundColor = "rgb(140, 250, 156)";
           });
 
-          const inputName = document.getElementById("player" + (player.id + 1)).value;
-          
+          const inputName = document.getElementById(
+            "player" + (player.id + 1)
+          ).value;
+
           if (inputName === "") {
             player.name = "Player " + (player.id + 1);
-          }
-          else {
+          } else {
             player.name = inputName;
           }
 
@@ -129,3 +130,16 @@ const displayController = (() => {
 })();
 
 displayController.render();
+
+const aiSwitch = document.getElementById("aiSwitch");
+aiSwitch.addEventListener("click", (e) => {
+  if (e.target.textContent === "1 player") {
+    e.target.textContent = "2 player"
+    document.getElementById("player2Div").style.display = "block";
+  }
+  else {
+    e.target.textContent = "1 player"
+    document.getElementById("player2Div").value = "";
+    document.getElementById("player2Div").style.display = "none";
+  }
+})

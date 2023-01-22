@@ -11,10 +11,13 @@
   </head>
   <body>
     <div id="title"><h1>Tic Tac Toe</h1></div>
-    <button id="resetButton">Reset</button>
+    <div id="buttons">
+      <button id="aiSwitch" class="topButtons">1 player</button>
+      <button id="resetButton" class="topButtons">Reset</button>
+    </div>
     <div id="nameEntry">
-      P1 Name: <input id="player1" width="50">
-      P2 Name: <input id="player2">
+      <div id="player1Div">P1 Name: <input id="player1" width="50"></div>
+      <div id="player2Div">P2 Name: <input id="player2" width="50"></div>
     </div>
     <div id="gameBoard"></div>
     <div id="resultDiv"></div>
