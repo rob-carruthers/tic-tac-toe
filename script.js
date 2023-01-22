@@ -1,10 +1,11 @@
-const Player = (name) => {
-  return { name };
+const Player = (symbol, id) => {
+  let name = "";
+  return { name, symbol, id };
 };
 
 const gameBoard = (() => {
   let board = new Array(9).fill("");
-  const players = [Player("X"), Player("O")];
+  const players = [Player("X", 0), Player("O", 1)];
   let currentPlayerIndex = 0;
   let playing = true;
 
@@ -35,7 +36,7 @@ const gameBoard = (() => {
       players.forEach((player) => {
         if (
           board[combo[0]] + board[combo[1]] + board[combo[2]] ===
-          player.name.repeat(3)
+          player.symbol.repeat(3)
         ) {
           const resultDiv = document.getElementById("resultDiv");
 
@@ -43,6 +44,15 @@ const gameBoard = (() => {
             const square = document.getElementById(n);
             square.style.backgroundColor = "rgb(140, 250, 156)";
           });
+
+          const inputName = document.getElementById("player" + (player.id + 1)).value;
+          
+          if (inputName === "") {
+            player.name = "Player " + (player.id + 1);
+          }
+          else {
+            player.name = inputName;
+          }
 
           resultDiv.textContent = player.name + " wins!";
           resultDiv.style.display = "flex";
@@ -80,7 +90,7 @@ const displayController = (() => {
         if (event.target.textContent === "" && gameBoard.isPlaying()) {
           event.target.innerHTML =
             "<p>" +
-            gameBoard.players[gameBoard.currentPlayerIndex].name +
+            gameBoard.players[gameBoard.currentPlayerIndex].symbol +
             "</p>";
           gameBoard.board[event.target.id] = event.target.textContent;
           gameBoard.checkForWin();
