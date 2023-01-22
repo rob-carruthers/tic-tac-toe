@@ -1,30 +1,70 @@
 body {
-  background-color: beige;
+  background-color: rgb(240, 240, 240);
   display: flex;
   flex-direction: column;
   gap: 10px;
   align-items: center;
-  justify-content: center;
   height: 100vh;
   font-family: "Ubuntu";
   margin: 0;
   padding: 0;
 }
 
+#title {
+  width: 100%;
+  text-align: center;
+  align-self: flex-start;
+  background-color: rgb(201, 201, 201);
+  box-shadow: 2px 2px 2px lightgray;
+}
+
 #gameBoard {
   display: grid;
-  grid-template: repeat(3, 100px) / repeat(3, 100px);
-  font-size: 48px;
+  grid-template: repeat(3, 1fr) / repeat(3, 1fr);
+  font-size: 5em;
   font-weight: bold;
   gap: 4px;
+  padding: 10px;
+  margin-top: 30px;
+  border-radius: 10px;
+  background-color: rgb(138, 168, 177);
+  width: 50%;
+  height: 50%;
+  border: 1px solid gray;
+  box-shadow: 2px 2px 2px lightgray;
 }
 
 .boardSquare {
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid black;
+  border: 1px solid rgb(82, 82, 82);
   background-color: white;
   cursor: pointer;
   user-select: none;
+  border-radius: 6px;
 }
+
+.boardSquare p {
+  animation: fadeIn 0.5s;
+  margin: 0;
+  padding: 0;
+}
+
+#resultDiv {
+  display: none;
+  margin-top: 20px;
+  padding: 15px;
+  animation: fadeIn 0.5s;
+  font-size: 2em;
+  font-weight: bolder;
+  background-color: white;
+  border-radius: 15px;
+  border: 3px solid black;
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+

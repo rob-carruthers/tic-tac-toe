@@ -31,6 +31,7 @@ const gameBoard = (() => {
         ) {
           const resultDiv = document.getElementById("resultDiv");
           resultDiv.textContent = player.name + " wins!";
+          resultDiv.style.display = "flex";
           playing = false;
         }
       });
@@ -61,8 +62,9 @@ const displayController = (() => {
 
       gridItem.addEventListener("click", (event) => {
         if (event.target.textContent === "" && gameBoard.isPlaying()) {
-          event.target.textContent =
-            gameBoard.players[gameBoard.currentPlayerIndex].name;
+          event.target.innerHTML = "<p>" +
+            gameBoard.players[gameBoard.currentPlayerIndex].name +
+            "</p>";
           gameBoard.board[event.target.id] = event.target.textContent;
           gameBoard.checkForWin();
           gameBoard.currentPlayerIndex = 1 - gameBoard.currentPlayerIndex;
