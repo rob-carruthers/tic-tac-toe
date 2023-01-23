@@ -62,7 +62,7 @@ const gameBoard = (() => {
     });
 
     // check for draw - if win check is passed, check if grid is full
-    if (gameBoard.board.indexOf("") === -1 ) {
+    if (gameBoard.board.indexOf("") === -1 && playing) {
       resultDiv.textContent = "It's a draw!";
       resultDiv.style.display = "flex";
       playing = false;
