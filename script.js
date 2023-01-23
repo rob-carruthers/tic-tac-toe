@@ -1,11 +1,38 @@
 const Player = (symbol, id) => {
   let name = "";
-  return { name, symbol, id };
+  let isAI = false;
+  return { name, symbol, id, isAI };
+};
+
+const AIPlayer = (symbol, id) => {
+  const prototype = Player(symbol, id);
+
+  prototype.isAI = true;
+
+  const move = () => {
+    if (gameBoard.isPlaying()) {
+      let possibleMoves = [];
+      for (let i = 0; i < 9; i++) {
+        if (gameBoard.board[i] === "") {
+          possibleMoves.push(i)
+        }
+      }
+      const randomSquare = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+      const gridItem = document.getElementById(randomSquare);
+      gameBoard.board[randomSquare] = prototype.symbol;
+      gridItem.innerHTML =
+              "<p>" +
+              prototype.symbol +
+              "</p>";
+
+    }
+  }
+  return Object.assign({}, prototype, {move});
 };
 
 const gameBoard = (() => {
   let board = new Array(9).fill("");
-  const players = [Player("X", 0), Player("O", 1)];
+  const players = [Player("X", 0), AIPlayer("O", 1)];
   let currentPlayerIndex = 0;
   let playing = true;
 
@@ -103,6 +130,11 @@ const displayController = (() => {
           gameBoard.board[event.target.id] = event.target.textContent;
           gameBoard.checkForWin();
           gameBoard.currentPlayerIndex = 1 - gameBoard.currentPlayerIndex;
+
+          if (gameBoard.players[gameBoard.currentPlayerIndex].isAI) {
+            gameBoard.players[gameBoard.currentPlayerIndex].move();
+            gameBoard.currentPlayerIndex = 1 - gameBoard.currentPlayerIndex;
+          }
         }
       });
 
@@ -134,12 +166,11 @@ displayController.render();
 const aiSwitch = document.getElementById("aiSwitch");
 aiSwitch.addEventListener("click", (e) => {
   if (e.target.textContent === "1 player") {
-    e.target.textContent = "2 player"
+    e.target.textContent = "2 player";
     document.getElementById("player2Div").style.display = "block";
-  }
-  else {
-    e.target.textContent = "1 player"
+  } else {
+    e.target.textContent = "1 player";
     document.getElementById("player2Div").value = "";
     document.getElementById("player2Div").style.display = "none";
   }
-})
+});
