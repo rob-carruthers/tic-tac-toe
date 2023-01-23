@@ -25,7 +25,6 @@ const AIPlayer = (symbol, id) => {
               "<p>" +
               prototype.symbol +
               "</p>";
-
     }
   }
   return Object.assign({}, prototype, {move});
@@ -48,6 +47,9 @@ const gameBoard = (() => {
   };
 
   const checkForWin = () => {
+    let winner = null;
+    let winSquares = [];
+
     const winCombos = [
       [0, 1, 2],
       [3, 4, 5],
@@ -66,13 +68,6 @@ const gameBoard = (() => {
           board[combo[0]] + board[combo[1]] + board[combo[2]] ===
           player.symbol.repeat(3)
         ) {
-          const resultDiv = document.getElementById("resultDiv");
-
-          combo.forEach((n) => {
-            const square = document.getElementById(n);
-            square.style.backgroundColor = "rgb(140, 250, 156)";
-          });
-
           const inputName = document.getElementById(
             "player" + (player.id + 1)
           ).value;
@@ -85,19 +80,19 @@ const gameBoard = (() => {
             player.name = inputName;
           }
 
-          resultDiv.textContent = player.name + " wins!";
-          resultDiv.style.display = "flex";
-          playing = false;
+          winner = player.name;
+          combo.forEach((square) => winSquares.push(square));
+          playing = false;          
         }
       });
     });
 
     // check for draw - if win check is passed, check if grid is full
     if (gameBoard.board.indexOf("") === -1 && playing) {
-      resultDiv.textContent = "It's a draw!";
-      resultDiv.style.display = "flex";
+      winner = "draw";
       playing = false;
     }
+    if (winner) return {winner, winSquares};
   };
 
   return {
@@ -131,13 +126,19 @@ const displayController = (() => {
             gameBoard.players[gameBoard.currentPlayerIndex].symbol +
             "</p>";
           gameBoard.board[event.target.id] = event.target.textContent;
-          gameBoard.checkForWin();
+          let result = gameBoard.checkForWin();
+          if(result) {
+            drawResult(result);
+          }
           gameBoard.currentPlayerIndex = 1 - gameBoard.currentPlayerIndex;
 
-          if (gameBoard.players[gameBoard.currentPlayerIndex].isAI) {
+          if (gameBoard.players[gameBoard.currentPlayerIndex].isAI && gameBoard.isPlaying()) {
             gameBoard.players[gameBoard.currentPlayerIndex].move();
             gameBoard.currentPlayerIndex = 1 - gameBoard.currentPlayerIndex;
-            gameBoard.checkForWin();
+            result = gameBoard.checkForWin();
+            if(result) {
+              drawResult(result);
+            }
           }
         }
       });
@@ -145,6 +146,23 @@ const displayController = (() => {
       boardDiv.appendChild(gridItem);
       counter++;
     });
+  };
+
+  const drawResult = (result) => {
+    const resultDiv = document.getElementById("resultDiv");
+    if (result.winner === "draw") {
+      resultDiv.textContent = "It's a draw!";
+      resultDiv.style.display = "flex";
+    }
+    else {
+      result.winSquares.forEach((n) => {
+        const square = document.getElementById(n);
+        square.style.backgroundColor = "rgb(140, 250, 156)";
+      });
+
+      resultDiv.textContent = result.winner + " wins!";
+      resultDiv.style.display = "flex";
+    }
   };
 
   const reset = () => {
