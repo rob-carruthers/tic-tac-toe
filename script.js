@@ -134,6 +134,7 @@ const displayController = (() => {
           if (gameBoard.players[gameBoard.currentPlayerIndex].isAI) {
             gameBoard.players[gameBoard.currentPlayerIndex].move();
             gameBoard.currentPlayerIndex = 1 - gameBoard.currentPlayerIndex;
+            gameBoard.checkForWin();
           }
         }
       });
