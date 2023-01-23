@@ -8,6 +8,7 @@ const AIPlayer = (symbol, id) => {
   const prototype = Player(symbol, id);
 
   prototype.isAI = true;
+  prototype.name = "AI"
 
   const move = () => {
     if (gameBoard.isPlaying()) {
@@ -77,7 +78,9 @@ const gameBoard = (() => {
           ).value;
 
           if (inputName === "") {
-            player.name = "Player " + (player.id + 1);
+            if (player.name === "") {
+              player.name = "Player " + (player.id + 1);
+            }
           } else {
             player.name = inputName;
           }
