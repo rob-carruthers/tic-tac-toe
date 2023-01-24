@@ -8,31 +8,59 @@ const AIPlayer = (symbol, id) => {
   const prototype = Player(symbol, id);
 
   prototype.isAI = true;
-  prototype.name = "AI"
+  prototype.name = "AI";
+
+  const getMiniMaxMove = () => {
+    let board = [...gameBoard.board];
+    let scores = {};
+
+    for (let i = 0; i < 9; i++) {
+      scores[i] = 0;
+    }
+
+    if (board.indexOf("") != -1) {
+      for (let i = 0; i < 9; i++) {
+        if (board[i] === "") {
+          board[i] = "O";
+
+          const result = gameBoard.checkForWin(board);
+
+          if (result) {
+            if (result.winner === "AI") {
+              scores[i] += 10;
+            } else {
+              scores[i] -= 10;
+            }
+          }
+
+          board[i] = "";
+        }
+      }
+    }
+    console.log(scores);
+  };
 
   const move = () => {
     if (gameBoard.isPlaying()) {
       let possibleMoves = [];
       for (let i = 0; i < 9; i++) {
         if (gameBoard.board[i] === "") {
-          possibleMoves.push(i)
+          possibleMoves.push(i);
         }
       }
-      const randomSquare = possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
+      const randomSquare =
+        possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
       const gridItem = document.getElementById(randomSquare);
       gameBoard.board[randomSquare] = prototype.symbol;
-      gridItem.innerHTML =
-              "<p>" +
-              prototype.symbol +
-              "</p>";
+      gridItem.innerHTML = "<p>" + prototype.symbol + "</p>";
     }
-  }
-  return Object.assign({}, prototype, {move});
+  };
+  return Object.assign({}, prototype, { move, getMiniMaxMove });
 };
 
 const gameBoard = (() => {
   // let board = new Array(9).fill("");
-  let board = ["X", "X", "", "O", "O", "", "X", "O", ""]
+  let board = ["X", "X", "", "O", "O", "", "X", "O", ""];
   const players = [Player("X", 0), AIPlayer("O", 1)];
   let currentPlayerIndex = 0;
   let playing = true;
@@ -47,7 +75,7 @@ const gameBoard = (() => {
     board.fill("");
   };
 
-  const checkForWin = () => {
+  const checkForWin = (board) => {
     let winner = null;
     let winSquares = [];
 
@@ -83,7 +111,7 @@ const gameBoard = (() => {
 
           winner = player.name;
           combo.forEach((square) => winSquares.push(square));
-          playing = false;          
+          playing = false;
         }
       });
     });
@@ -93,7 +121,7 @@ const gameBoard = (() => {
       winner = "draw";
       playing = false;
     }
-    if (winner) return {winner, winSquares};
+    if (winner) return { winner, winSquares };
   };
 
   return {
@@ -127,17 +155,20 @@ const displayController = (() => {
             gameBoard.players[gameBoard.currentPlayerIndex].symbol +
             "</p>";
           gameBoard.board[event.target.id] = event.target.textContent;
-          let result = gameBoard.checkForWin();
-          if(result) {
+          let result = gameBoard.checkForWin(gameBoard.board);
+          if (result) {
             drawResult(result);
           }
           gameBoard.currentPlayerIndex = 1 - gameBoard.currentPlayerIndex;
 
-          if (gameBoard.players[gameBoard.currentPlayerIndex].isAI && gameBoard.isPlaying()) {
+          if (
+            gameBoard.players[gameBoard.currentPlayerIndex].isAI &&
+            gameBoard.isPlaying()
+          ) {
             gameBoard.players[gameBoard.currentPlayerIndex].move();
             gameBoard.currentPlayerIndex = 1 - gameBoard.currentPlayerIndex;
-            result = gameBoard.checkForWin();
-            if(result) {
+            result = gameBoard.checkForWin(gameBoard.board);
+            if (result) {
               drawResult(result);
             }
           }
@@ -154,8 +185,7 @@ const displayController = (() => {
     if (result.winner === "draw") {
       resultDiv.textContent = "It's a draw!";
       resultDiv.style.display = "flex";
-    }
-    else {
+    } else {
       result.winSquares.forEach((n) => {
         const square = document.getElementById(n);
         square.style.backgroundColor = "rgb(140, 250, 156)";
@@ -185,6 +215,7 @@ const displayController = (() => {
 })();
 
 displayController.render();
+gameBoard.players[1].getMiniMaxMove();
 
 const aiSwitch = document.getElementById("aiSwitch");
 aiSwitch.addEventListener("click", (e) => {
