@@ -31,7 +31,8 @@ const AIPlayer = (symbol, id) => {
 };
 
 const gameBoard = (() => {
-  let board = new Array(9).fill("");
+  // let board = new Array(9).fill("");
+  let board = ["X", "X", "", "O", "O", "", "X", "O", ""]
   const players = [Player("X", 0), AIPlayer("O", 1)];
   let currentPlayerIndex = 0;
   let playing = true;
