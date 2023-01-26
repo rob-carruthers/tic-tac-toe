@@ -13,6 +13,8 @@ body {
   padding: 0;
 }
 
+
+
 #title {
   width: 100%;
   text-align: center;
@@ -107,6 +109,16 @@ body {
 #nameEntry {
   display: flex;
   gap: 10px;
+}
+
+#footer {
+  justify-self: flex-end;
+  margin-top: auto;
+  background-color: gainsboro;
+  width: 100%;
+  padding: 15px;
+  display: flex;
+  justify-content: center;
 }
 
 @keyframes fadeIn {
