@@ -1,18 +1,19 @@
 const Player = (symbol, id) => {
   let name = "";
   let isAI = false;
-  return { name, symbol, id, isAI };
+
+  const setSymbol = (newSymbol) => {symbol = newSymbol};
+
+  return { name, symbol, id, isAI, setSymbol };
 };
 
 const AIPlayer = (symbol, id) => {
-  const prototype = Player(symbol, id);
+  let name = "AI";
+  let isAI = true;
 
-  prototype.isAI = true;
-  prototype.name = "AI";
+  const setSymbol = (newSymbol) => {symbol = newSymbol};
 
   const minimax = (board, depth, isMax, AISymbol, playerSymbol) => {
-
-
     let result = gameBoard.checkForWin(board);
     if (result) {
       if (result.winner === "AI") {
@@ -23,7 +24,6 @@ const AIPlayer = (symbol, id) => {
         return -100 + depth;
       }
     }
-
 
     if (isMax) {
       let best = -1000;
@@ -51,27 +51,29 @@ const AIPlayer = (symbol, id) => {
   };
 
   const getMiniMaxMove = (board, AISymbol, playerSymbol) => {
-    debugger;
     let bestScore = -1000;
     let bestMove = -1;
     // Race condition 1: If player goes to a corner first, AI should choose centre
-    if ((board.join("").length === 1) && [0, 2, 6, 8].includes(board.indexOf(playerSymbol))) {
+    if (
+      board.join("").length === 1 &&
+      [0, 2, 6, 8].includes(board.indexOf(playerSymbol))
+    ) {
       bestMove = 4;
       return bestMove;
     }
-    
-    
 
     // Race condition 2: Check if X has taken 2 corners and if so, prevent a win
     let allowedMoves = [0, 1, 2, 3, 4, 5, 6, 7, 8];
     let playerCornerCounter = 0;
 
     [0, 2, 6, 8].forEach((i) => {
-      if (board[i] === playerSymbol) {playerCornerCounter++}
-    })
+      if (board[i] === playerSymbol) {
+        playerCornerCounter++;
+      }
+    });
 
     if (playerCornerCounter > 1) {
-      allowedMoves = [1, 3, 4, 5, 7]
+      allowedMoves = [1, 3, 4, 5, 7];
     }
 
     // Find best move using minimax algorithm (limited by RC2 above if needed)
@@ -117,17 +119,21 @@ const AIPlayer = (symbol, id) => {
     }
 
     return bestMove;
-  }
+  };
 
   const move = () => {
     if (gameBoard.isPlaying()) {
-      const nextMove = getMiniMaxMove([...gameBoard.board], gameBoard.players[1].symbol, gameBoard.players[0].symbol);
+      const nextMove = getMiniMaxMove(
+        [...gameBoard.board],
+        symbol,
+        gameBoard.players[0].symbol
+      );
       const gridItem = document.getElementById(nextMove);
-      gameBoard.board[nextMove] = prototype.symbol;
-      gridItem.innerHTML = "<p>" + prototype.symbol + "</p>";
+      gameBoard.board[nextMove] = symbol;
+      gridItem.innerHTML = "<p>" + symbol + "</p>";
     }
   };
-  return Object.assign({}, prototype, { move, minimax });
+  return { name, symbol, id, isAI, move, minimax, setSymbol };
 };
 
 const gameBoard = (() => {
@@ -224,6 +230,7 @@ const displayController = (() => {
 
       gridItem.addEventListener("click", (event) => {
         if (event.target.textContent === "" && gameBoard.isPlaying()) {
+          console.log(gameBoard.players[gameBoard.currentPlayerIndex]);
           event.target.innerHTML =
             "<p>" +
             gameBoard.players[gameBoard.currentPlayerIndex].symbol +
@@ -282,6 +289,7 @@ const displayController = (() => {
     gameBoard.currentPlayerIndex = 0;
     const resultDiv = document.getElementById("resultDiv");
     resultDiv.style.display = "none";
+    console.log(gameBoard.players);
   };
 
   const resetButton = document.getElementById("resetButton");
@@ -293,15 +301,76 @@ const displayController = (() => {
 displayController.render();
 
 const aiSwitch = document.getElementById("aiSwitch");
+const playerXButton = document.getElementById("playerX");
+const playerOButton = document.getElementById("playerO");
+
 aiSwitch.addEventListener("click", (e) => {
   if (e.target.textContent === "1 player") {
     e.target.textContent = "2 player";
     document.getElementById("player2Div").style.display = "block";
+    gameBoard.players[0].symbol = "X";
+    gameBoard.players[0].setSymbol("X")
     gameBoard.players[1] = Player("O", 1);
+    playerXButton.style.display = "none";
+    playerOButton.style.display = "none";
   } else {
     e.target.textContent = "1 player";
     document.getElementById("player2Div").value = "";
     document.getElementById("player2Div").style.display = "none";
+    gameBoard.players[0].symbol = "X";
+    gameBoard.players[0].setSymbol("X")
     gameBoard.players[1] = AIPlayer("O", 1);
+    playerXButton.style.display = "block";
+    playerOButton.style.display = "block";
+    playerXButton.classList.add("activated");
+    playerOButton.classList.remove("activated");
   }
 });
+
+playerXButton.addEventListener("click", (e) => {
+  if (gameBoard.board.join("") === "" || !gameBoard.isPlaying()) {
+    gameBoard.players[0].symbol = "X";
+    gameBoard.players[0].setSymbol("X")
+    gameBoard.players[1].symbol = "O";
+    gameBoard.players[1].setSymbol("O")
+    e.target.classList.add("activated");
+    playerOButton.classList.remove("activated");
+  }
+});
+
+playerOButton.addEventListener("click", (e) => {
+  if (gameBoard.board.join("") === "" || !gameBoard.isPlaying()) {
+    gameBoard.players[0].symbol = "O";
+    gameBoard.players[0].setSymbol("O")
+    gameBoard.players[1].symbol = "X";
+    gameBoard.players[1].setSymbol("X")
+    e.target.classList.add("activated");
+    playerXButton.classList.remove("activated");
+  }
+});
+
+playerXButton.addEventListener("mouseover", (e) => {
+  if (gameBoard.board.join("") != "" && gameBoard.isPlaying()) {
+    e.target.classList.add("disabled");
+  }
+});
+
+playerXButton.addEventListener("mouseout", (e) => {
+  if (gameBoard.board.join("") != "" && gameBoard.isPlaying()) {
+    e.target.classList.remove("disabled");
+  }
+});
+
+playerOButton.addEventListener("mouseover", (e) => {
+  if (gameBoard.board.join("") != "" && gameBoard.isPlaying()) {
+    e.target.classList.add("disabled");
+  }
+});
+
+playerOButton.addEventListener("mouseout", (e) => {
+  if (gameBoard.board.join("") != "" && gameBoard.isPlaying()) {
+    e.target.classList.remove("disabled");
+  }
+});
+
+
