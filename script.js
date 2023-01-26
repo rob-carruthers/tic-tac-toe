@@ -297,9 +297,11 @@ aiSwitch.addEventListener("click", (e) => {
   if (e.target.textContent === "1 player") {
     e.target.textContent = "2 player";
     document.getElementById("player2Div").style.display = "block";
+    gameBoard.players[1] = Player("O", 1);
   } else {
     e.target.textContent = "1 player";
     document.getElementById("player2Div").value = "";
     document.getElementById("player2Div").style.display = "none";
+    gameBoard.players[1] = AIPlayer("O", 1);
   }
 });
