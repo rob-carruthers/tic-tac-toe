@@ -10,57 +10,128 @@ const AIPlayer = (symbol, id) => {
   prototype.isAI = true;
   prototype.name = "AI";
 
-  const getMiniMaxMove = () => {
-    let board = [...gameBoard.board];
-    let scores = {};
+  const minimax = (board, depth, isMax, AISymbol, playerSymbol) => {
 
-    for (let i = 0; i < 9; i++) {
-      scores[i] = 0;
-    }
 
-    if (board.indexOf("") != -1) {
-      for (let i = 0; i < 9; i++) {
-        if (board[i] === "") {
-          board[i] = "O";
-
-          const result = gameBoard.checkForWin(board);
-
-          if (result) {
-            if (result.winner === "AI") {
-              scores[i] += 10;
-            } else {
-              scores[i] -= 10;
-            }
-          }
-
-          board[i] = "";
-        }
+    let result = gameBoard.checkForWin(board);
+    if (result) {
+      if (result.winner === "AI") {
+        return 100 - depth;
+      } else if (result.winner === "draw") {
+        return 0;
+      } else {
+        return -100 + depth;
       }
     }
-    console.log(scores);
+
+
+    if (isMax) {
+      let best = -1000;
+      for (let i = 0; i < 9; i++) {
+        if (board[i] === "") {
+          board[i] = playerSymbol;
+          let score = minimax(board, depth + 1, !isMax);
+          board[i] = "";
+          best = Math.max(best, score);
+        }
+      }
+      return best;
+    } else {
+      let best = 1000;
+      for (let i = 0; i < 9; i++) {
+        if (board[i] === "") {
+          board[i] = AISymbol;
+          let score = minimax(board, depth + 1, !isMax);
+          board[i] = "";
+          best = Math.min(best, score);
+        }
+      }
+      return best;
+    }
   };
+
+  const getMiniMaxMove = (board, AISymbol, playerSymbol) => {
+    debugger;
+    let bestScore = -1000;
+    let bestMove = -1;
+    // Race condition 1: If player goes to a corner first, AI should choose centre
+    if ((board.join("").length === 1) && [0, 2, 6, 8].includes(board.indexOf(playerSymbol))) {
+      bestMove = 4;
+      return bestMove;
+    }
+    
+    
+
+    // Race condition 2: Check if X has taken 2 corners and if so, prevent a win
+    let allowedMoves = [0, 1, 2, 3, 4, 5, 6, 7, 8];
+    let playerCornerCounter = 0;
+
+    [0, 2, 6, 8].forEach((i) => {
+      if (board[i] === playerSymbol) {playerCornerCounter++}
+    })
+
+    if (playerCornerCounter > 1) {
+      allowedMoves = [1, 3, 4, 5, 7]
+    }
+
+    // Find best move using minimax algorithm (limited by RC2 above if needed)
+    allowedMoves.forEach((i) => {
+      if (board[i] === "") {
+        board[i] = AISymbol;
+        let score = minimax(board, 0, true);
+        board[i] = "";
+        if (score > bestScore) {
+          bestScore = score;
+          bestMove = i;
+        }
+      }
+    });
+
+    // Race condition 3: Check whether X has a win on the next turn and should be blocked
+    // (This overrides a previous best move calculated by minimax)
+    for (let i = 0; i < 9; i++) {
+      if (board[i] === "") {
+        board[i] = playerSymbol;
+        let result = gameBoard.checkForWin(board);
+        if (result) {
+          if (result.winner != "AI" && result.winner != "draw") {
+            bestMove = i;
+          }
+        }
+        board[i] = "";
+      }
+    }
+
+    // Race condition 4: Prefer AI win over draw or blocking player
+    for (let i = 0; i < 9; i++) {
+      if (board[i] === "") {
+        board[i] = AISymbol;
+        let result = gameBoard.checkForWin(board);
+        if (result) {
+          if (result.winner === "AI") {
+            bestMove = i;
+          }
+        }
+        board[i] = "";
+      }
+    }
+
+    return bestMove;
+  }
 
   const move = () => {
     if (gameBoard.isPlaying()) {
-      let possibleMoves = [];
-      for (let i = 0; i < 9; i++) {
-        if (gameBoard.board[i] === "") {
-          possibleMoves.push(i);
-        }
-      }
-      const randomSquare =
-        possibleMoves[Math.floor(Math.random() * possibleMoves.length)];
-      const gridItem = document.getElementById(randomSquare);
-      gameBoard.board[randomSquare] = prototype.symbol;
+      const nextMove = getMiniMaxMove([...gameBoard.board], gameBoard.players[1].symbol, gameBoard.players[0].symbol);
+      const gridItem = document.getElementById(nextMove);
+      gameBoard.board[nextMove] = prototype.symbol;
       gridItem.innerHTML = "<p>" + prototype.symbol + "</p>";
     }
   };
-  return Object.assign({}, prototype, { move, getMiniMaxMove });
+  return Object.assign({}, prototype, { move, minimax });
 };
 
 const gameBoard = (() => {
-  // let board = new Array(9).fill("");
-  let board = ["X", "X", "", "O", "O", "", "X", "O", ""];
+  let board = new Array(9).fill("");
   const players = [Player("X", 0), AIPlayer("O", 1)];
   let currentPlayerIndex = 0;
   let playing = true;
@@ -69,6 +140,10 @@ const gameBoard = (() => {
 
   const setPlaying = () => {
     playing = true;
+  };
+
+  const setNotPlaying = () => {
+    playing = false;
   };
 
   const resetBoard = () => {
@@ -111,15 +186,13 @@ const gameBoard = (() => {
 
           winner = player.name;
           combo.forEach((square) => winSquares.push(square));
-          playing = false;
         }
       });
     });
 
     // check for draw - if win check is passed, check if grid is full
-    if (gameBoard.board.indexOf("") === -1 && playing) {
+    if (gameBoard.board.indexOf("") === -1 && !winner) {
       winner = "draw";
-      playing = false;
     }
     if (winner) return { winner, winSquares };
   };
@@ -132,6 +205,7 @@ const gameBoard = (() => {
     currentPlayerIndex,
     checkForWin,
     setPlaying,
+    setNotPlaying,
     resetBoard,
   };
 })();
@@ -158,6 +232,7 @@ const displayController = (() => {
           let result = gameBoard.checkForWin(gameBoard.board);
           if (result) {
             drawResult(result);
+            gameBoard.setNotPlaying();
           }
           gameBoard.currentPlayerIndex = 1 - gameBoard.currentPlayerIndex;
 
@@ -170,6 +245,7 @@ const displayController = (() => {
             result = gameBoard.checkForWin(gameBoard.board);
             if (result) {
               drawResult(result);
+              gameBoard.setNotPlaying();
             }
           }
         }
@@ -215,7 +291,6 @@ const displayController = (() => {
 })();
 
 displayController.render();
-gameBoard.players[1].getMiniMaxMove();
 
 const aiSwitch = document.getElementById("aiSwitch");
 aiSwitch.addEventListener("click", (e) => {
