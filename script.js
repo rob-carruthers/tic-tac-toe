@@ -2,7 +2,9 @@ const Player = (symbol, id) => {
   let name = "";
   let isAI = false;
 
-  const setSymbol = (newSymbol) => {symbol = newSymbol};
+  const setSymbol = (newSymbol) => {
+    symbol = newSymbol;
+  };
 
   return { name, symbol, id, isAI, setSymbol };
 };
@@ -11,7 +13,9 @@ const AIPlayer = (symbol, id) => {
   let name = "AI";
   let isAI = true;
 
-  const setSymbol = (newSymbol) => {symbol = newSymbol};
+  const setSymbol = (newSymbol) => {
+    symbol = newSymbol;
+  };
 
   const minimax = (board, depth, isMax, AISymbol, playerSymbol) => {
     let result = gameBoard.checkForWin(board);
@@ -309,7 +313,7 @@ aiSwitch.addEventListener("click", (e) => {
     e.target.textContent = "2 player";
     document.getElementById("player2Div").style.display = "block";
     gameBoard.players[0].symbol = "X";
-    gameBoard.players[0].setSymbol("X")
+    gameBoard.players[0].setSymbol("X");
     gameBoard.players[1] = Player("O", 1);
     playerXButton.style.display = "none";
     playerOButton.style.display = "none";
@@ -318,7 +322,7 @@ aiSwitch.addEventListener("click", (e) => {
     document.getElementById("player2Div").value = "";
     document.getElementById("player2Div").style.display = "none";
     gameBoard.players[0].symbol = "X";
-    gameBoard.players[0].setSymbol("X")
+    gameBoard.players[0].setSymbol("X");
     gameBoard.players[1] = AIPlayer("O", 1);
     playerXButton.style.display = "block";
     playerOButton.style.display = "block";
@@ -330,9 +334,9 @@ aiSwitch.addEventListener("click", (e) => {
 playerXButton.addEventListener("click", (e) => {
   if (gameBoard.board.join("") === "" || !gameBoard.isPlaying()) {
     gameBoard.players[0].symbol = "X";
-    gameBoard.players[0].setSymbol("X")
+    gameBoard.players[0].setSymbol("X");
     gameBoard.players[1].symbol = "O";
-    gameBoard.players[1].setSymbol("O")
+    gameBoard.players[1].setSymbol("O");
     e.target.classList.add("activated");
     playerOButton.classList.remove("activated");
   }
@@ -341,9 +345,9 @@ playerXButton.addEventListener("click", (e) => {
 playerOButton.addEventListener("click", (e) => {
   if (gameBoard.board.join("") === "" || !gameBoard.isPlaying()) {
     gameBoard.players[0].symbol = "O";
-    gameBoard.players[0].setSymbol("O")
+    gameBoard.players[0].setSymbol("O");
     gameBoard.players[1].symbol = "X";
-    gameBoard.players[1].setSymbol("X")
+    gameBoard.players[1].setSymbol("X");
     e.target.classList.add("activated");
     playerXButton.classList.remove("activated");
   }
@@ -372,5 +376,3 @@ playerOButton.addEventListener("mouseout", (e) => {
     e.target.classList.remove("disabled");
   }
 });
-
-
