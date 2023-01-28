@@ -236,7 +236,6 @@ const displayController = (() => {
 
       gridItem.addEventListener("click", (event) => {
         if (event.target.textContent === "" && gameBoard.isPlaying()) {
-          console.log(gameBoard.players[gameBoard.currentPlayerIndex]);
           event.target.innerHTML =
             gameBoard.players[gameBoard.currentPlayerIndex].repr;
           gameBoard.board[event.target.id] = gameBoard.players[gameBoard.currentPlayerIndex].symbol;
@@ -293,13 +292,12 @@ const displayController = (() => {
     gameBoard.currentPlayerIndex = 0;
     const resultDiv = document.getElementById("resultDiv");
     resultDiv.style.display = "none";
-    console.log(gameBoard.players);
   };
 
   const resetButton = document.getElementById("resetButton");
   resetButton.addEventListener("click", reset);
 
-  return { render };
+  return { render, reset };
 })();
 
 displayController.render();
@@ -315,8 +313,10 @@ aiSwitch.addEventListener("click", (e) => {
     gameBoard.players[0].symbol = "X";
     gameBoard.players[0].setSymbol("X");
     gameBoard.players[1] = Player("O", 1);
+    gameBoard.players[1].repr = "<img src='./images/dog.png'>"
     playerXButton.style.display = "none";
     playerOButton.style.display = "none";
+    displayController.reset();
   } else {
     e.target.textContent = "1 player";
     document.getElementById("player2Div").value = "";
@@ -328,6 +328,7 @@ aiSwitch.addEventListener("click", (e) => {
     playerOButton.style.display = "block";
     playerXButton.classList.add("activated");
     playerOButton.classList.remove("activated");
+    displayController.reset();
   }
 });
 
