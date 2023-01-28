@@ -1,7 +1,7 @@
 const Player = (symbol, id) => {
   let name = "";
   let isAI = false;
-  let repr = "Cat"
+  let repr = "<img src='./images/cat.png'>"
 
   const setSymbol = (newSymbol) => {
     symbol = newSymbol;
@@ -13,7 +13,7 @@ const Player = (symbol, id) => {
 const AIPlayer = (symbol, id) => {
   let name = "AI";
   let isAI = true;
-  let repr = "Dog"
+  let repr = "<img src='./images/dog.png'>"
 
   const setSymbol = (newSymbol) => {
     symbol = newSymbol;
@@ -136,7 +136,7 @@ const AIPlayer = (symbol, id) => {
       );
       const gridItem = document.getElementById(nextMove);
       gameBoard.board[nextMove] = symbol;
-      gridItem.innerHTML = "<p>" + repr + "</p>";
+      gridItem.innerHTML = repr;
     }
   };
   return { name, symbol, id, isAI, repr, move, minimax, setSymbol };
@@ -238,9 +238,7 @@ const displayController = (() => {
         if (event.target.textContent === "" && gameBoard.isPlaying()) {
           console.log(gameBoard.players[gameBoard.currentPlayerIndex]);
           event.target.innerHTML =
-            "<p>" +
-            gameBoard.players[gameBoard.currentPlayerIndex].repr +
-            "</p>";
+            gameBoard.players[gameBoard.currentPlayerIndex].repr;
           gameBoard.board[event.target.id] = gameBoard.players[gameBoard.currentPlayerIndex].symbol;
           let result = gameBoard.checkForWin(gameBoard.board);
           if (result) {
