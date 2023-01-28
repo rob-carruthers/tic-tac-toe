@@ -7,7 +7,11 @@ const Player = (symbol, id) => {
     symbol = newSymbol;
   };
 
-  return { name, symbol, id, isAI, repr, setSymbol };
+  const setRepr = (newRepr) => {
+    repr = newRepr;
+  };
+
+  return { name, symbol, id, isAI, repr, setSymbol, setRepr };
 };
 
 const AIPlayer = (symbol, id) => {
@@ -17,6 +21,10 @@ const AIPlayer = (symbol, id) => {
 
   const setSymbol = (newSymbol) => {
     symbol = newSymbol;
+  };
+
+  const setRepr = (newRepr) => {
+    repr = newRepr;
   };
 
   const minimax = (board, depth, isMax, AISymbol, playerSymbol) => {
@@ -139,7 +147,7 @@ const AIPlayer = (symbol, id) => {
       gridItem.innerHTML = repr;
     }
   };
-  return { name, symbol, id, isAI, repr, move, minimax, setSymbol };
+  return { name, symbol, id, isAI, repr, move, minimax, setSymbol, setRepr };
 };
 
 const gameBoard = (() => {
@@ -312,6 +320,7 @@ aiSwitch.addEventListener("click", (e) => {
     document.getElementById("player2Div").style.display = "block";
     gameBoard.players[0].symbol = "X";
     gameBoard.players[0].setSymbol("X");
+    gameBoard.players[0].repr = "<img src='./images/cat.png'>"
     gameBoard.players[1] = Player("O", 1);
     gameBoard.players[1].repr = "<img src='./images/dog.png'>"
     playerXButton.style.display = "none";
@@ -336,9 +345,13 @@ playerXButton.addEventListener("click", (e) => {
   if (gameBoard.board.join("") === "" || !gameBoard.isPlaying()) {
     gameBoard.players[0].symbol = "X";
     gameBoard.players[0].setSymbol("X");
+    gameBoard.players[0].repr = "<img src='./images/cat.png'>"
+    gameBoard.players[0].setRepr("<img src='./images/cat.png'>")
     gameBoard.players[1].symbol = "O";
     gameBoard.players[1].setSymbol("O");
-    e.target.classList.add("activated");
+    gameBoard.players[1].repr = "<img src='./images/dog.png'>"
+    gameBoard.players[1].setRepr("<img src='./images/dog.png'>")
+    playerXButton.classList.add("activated");
     playerOButton.classList.remove("activated");
   }
 });
@@ -347,9 +360,13 @@ playerOButton.addEventListener("click", (e) => {
   if (gameBoard.board.join("") === "" || !gameBoard.isPlaying()) {
     gameBoard.players[0].symbol = "O";
     gameBoard.players[0].setSymbol("O");
+    gameBoard.players[0].repr = "<img src='./images/dog.png'>"
+    gameBoard.players[0].setRepr("<img src='./images/dog.png'>")
     gameBoard.players[1].symbol = "X";
     gameBoard.players[1].setSymbol("X");
-    e.target.classList.add("activated");
+    gameBoard.players[1].repr = "<img src='./images/cat.png'>"
+    gameBoard.players[1].setRepr("<img src='./images/cat.png'>")
+    playerOButton.classList.add("activated");
     playerXButton.classList.remove("activated");
   }
 });

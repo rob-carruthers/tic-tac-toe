@@ -102,6 +102,10 @@ body {
   cursor: not-allowed;
 }
 
+.topButtons.disabled {
+  cursor: not-allowed;
+}
+
 #aiSwitch {
   width: 150px;
 }
