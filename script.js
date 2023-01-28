@@ -57,10 +57,10 @@ const AIPlayer = (symbol, id) => {
   const getMiniMaxMove = (board, AISymbol, playerSymbol) => {
     let bestScore = -1000;
     let bestMove = -1;
-    // Race condition 1: If player goes to a corner first, AI should choose centre
+    // Race condition 1: If available, AI should choose centre
     if (
       board.join("").length === 1 &&
-      [0, 2, 6, 8].includes(board.indexOf(playerSymbol))
+      board[4] != playerSymbol
     ) {
       bestMove = 4;
       return bestMove;
