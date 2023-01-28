@@ -241,7 +241,7 @@ const displayController = (() => {
             "<p>" +
             gameBoard.players[gameBoard.currentPlayerIndex].repr +
             "</p>";
-          gameBoard.board[event.target.id] = event.target.textContent;
+          gameBoard.board[event.target.id] = gameBoard.players[gameBoard.currentPlayerIndex].symbol;
           let result = gameBoard.checkForWin(gameBoard.board);
           if (result) {
             drawResult(result);
