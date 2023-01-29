@@ -43,8 +43,8 @@ const AIPlayer = (symbol, id) => {
       let best = -1000;
       for (let i = 0; i < 9; i++) {
         if (board[i] === "") {
-          board[i] = playerSymbol;
-          let score = minimax(board, depth + 1, !isMax);
+          board[i] = AISymbol;
+          let score = minimax(board, depth + 1, !isMax, AISymbol, playerSymbol);
           board[i] = "";
           best = Math.max(best, score);
         }
@@ -54,8 +54,8 @@ const AIPlayer = (symbol, id) => {
       let best = 1000;
       for (let i = 0; i < 9; i++) {
         if (board[i] === "") {
-          board[i] = AISymbol;
-          let score = minimax(board, depth + 1, !isMax);
+          board[i] = playerSymbol;
+          let score = minimax(board, depth + 1, !isMax, AISymbol, playerSymbol);
           board[i] = "";
           best = Math.min(best, score);
         }
@@ -76,35 +76,22 @@ const AIPlayer = (symbol, id) => {
       return bestMove;
     }
 
-    // Race condition 2: Check if X has taken 2 corners and if so, prevent a win
-    let allowedMoves = [0, 1, 2, 3, 4, 5, 6, 7, 8];
-    let playerCornerCounter = 0;
-
-    [0, 2, 6, 8].forEach((i) => {
-      if (board[i] === playerSymbol) {
-        playerCornerCounter++;
-      }
-    });
-
-    if (playerCornerCounter > 1) {
-      allowedMoves = [1, 3, 4, 5, 7];
-    }
-
     // Find best move using minimax algorithm (limited by RC2 above if needed)
-    allowedMoves.forEach((i) => {
+    for (let i = 0; i < 9; i++ ) {
       if (board[i] === "") {
         board[i] = AISymbol;
-        let score = minimax(board, 0, true);
+        let score = minimax(board, 0, false, AISymbol, playerSymbol);
         board[i] = "";
         if (score > bestScore) {
           bestScore = score;
           bestMove = i;
         }
       }
-    });
+    };
 
-    // Race condition 3: Check whether X has a win on the next turn and should be blocked
+    // Race condition 2: Check whether X has a win on the next turn and should be blocked
     // (This overrides a previous best move calculated by minimax)
+
     for (let i = 0; i < 9; i++) {
       if (board[i] === "") {
         board[i] = playerSymbol;
@@ -117,8 +104,8 @@ const AIPlayer = (symbol, id) => {
         board[i] = "";
       }
     }
-
-    // Race condition 4: Prefer AI win over draw or blocking player
+    
+    // Race condition 3: Prefer AI win over draw or blocking player
     for (let i = 0; i < 9; i++) {
       if (board[i] === "") {
         board[i] = AISymbol;
