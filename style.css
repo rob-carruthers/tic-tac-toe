@@ -78,7 +78,7 @@ body {
 
 #buttons, #difficulty {
   display: flex;
-  gap: 15px;
+  gap: 10px;
 }
 
 .topButtons {
@@ -111,7 +111,7 @@ body {
 }
 
 #aiSwitch {
-  width: 150px;
+  width: 110px;
 }
 
 #player2Div {
