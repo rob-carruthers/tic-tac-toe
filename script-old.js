@@ -1,4 +1,4 @@
-let difficulty = 0;
+/*let difficulty = 0;
 
 const Player = (symbol, id) => {
   let name = "";
@@ -15,6 +15,7 @@ const Player = (symbol, id) => {
 
   return { name, symbol, id, isAI, repr, setSymbol, setRepr };
 };
+*/
 
 const AIPlayer = (symbol, id) => {
   let name = "AI";
@@ -176,11 +177,14 @@ const AIPlayer = (symbol, id) => {
   return { name, symbol, id, isAI, repr, move, setSymbol, setRepr };
 };
 
+/*
 const gameBoard = (() => {
+  
   let board = new Array(9).fill("");
   const players = [Player("X", 0), AIPlayer("O", 1)];
   let currentPlayerIndex = 0;
   let playing = true;
+  
 
   const isPlaying = () => playing;
 
@@ -255,6 +259,7 @@ const gameBoard = (() => {
     resetBoard,
   };
 })();
+*/
 
 const displayController = (() => {
   const render = () => {
