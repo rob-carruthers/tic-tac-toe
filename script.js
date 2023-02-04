@@ -7,6 +7,9 @@ const difficultyButtons = document.getElementById("difficulty");
 const beginnerButton = document.getElementById("beginner");
 const intermediateButton = document.getElementById("intermediate");
 const masterButton = document.getElementById("master");
+const player1Name = document.getElementById("player1");
+const player2Name = document.getElementById("player2");
+
 
 let masterBoard = new Array(9).fill("");
 let players = [];
@@ -295,6 +298,9 @@ function reset() {
     square.style.backgroundColor = "white";
   }
 
+  player1Name.value = "";
+  player2Name.value = "";
+
   isPlaying = true;
   resultDiv.style.display = "none";
   currentPlayerIndex = 0;
@@ -318,7 +324,7 @@ function initialRender() {
 
   players.push(new Player("X", 0));
   players.push(new AIPlayer("O", 1, players[0]));
-  players[0].name = "Player";
+  players[0].name = "Player 1";
 }
 
 aiSwitch.addEventListener("click", (e) => {
@@ -329,6 +335,7 @@ aiSwitch.addEventListener("click", (e) => {
     players[0].repr = "<img src='./images/cat.png'>";
     players[1] = new Player("O", 1);
     players[1].repr = "<img src='./images/dog.png'>";
+    players[1].name = "Player 2";
     playerXButton.style.display = "none";
     playerOButton.style.display = "none";
     difficultyButtons.style.display = "none";
@@ -416,5 +423,23 @@ masterButton.addEventListener("click", (e) => {
   intermediateButton.classList.remove("activated");
   difficulty = 2;
 });
+
+player1Name.addEventListener("change", (e) => {
+  if (e.target.value === "") {
+    players[0].name = "Player 1";
+  }
+  else {
+    players[0].name = e.target.value
+  }
+})
+
+player2Name.addEventListener("change", (e) => {
+  if (e.target.value === "") {
+    players[1].name = "Player 2";
+  }
+  else {
+    players[1].name = e.target.value
+  }
+})
 
 initialRender(masterBoard);
