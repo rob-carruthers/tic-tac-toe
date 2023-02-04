@@ -177,9 +177,21 @@ class AIPlayer extends Player {
         case 0:
           nextMove = this.getRandomMove(board);
           break;
+        case 1:
+          let intermediatePossibleMoves = [];
+          intermediatePossibleMoves.push(this.getRandomMove(board));
+          intermediatePossibleMoves.push(
+            this.getMiniMaxMove([...board], this.symbol, this.opponent.symbol)
+          );
+
+          nextMove =
+            intermediatePossibleMoves[
+              Math.floor(Math.random() * intermediatePossibleMoves.length)
+            ];
+          break;
         case 2: {
           nextMove = this.getMiniMaxMove(
-            [...masterBoard],
+            [...board],
             this.symbol,
             this.opponent.symbol
           );
