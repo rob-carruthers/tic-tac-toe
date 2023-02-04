@@ -1,3 +1,18 @@
+const resultDiv = document.getElementById("resultDiv");
+const aiSwitch = document.getElementById("aiSwitch");
+const playerXButton = document.getElementById("playerX");
+const playerOButton = document.getElementById("playerO");
+const difficultyButtons = document.getElementById("difficulty");
+const beginnerButton = document.getElementById("beginner");
+const intermediateButton = document.getElementById("intermediate");
+const masterButton = document.getElementById("master");
+
+let masterBoard = new Array(9).fill("");
+let players = [];
+let currentPlayerIndex = 0;
+let isPlaying = true;
+let difficulty = 0;
+
 class Player {
   constructor(symbol, id) {
     this.symbol = symbol;
@@ -70,10 +85,6 @@ class AIPlayer extends Player {
   }
 }
 
-function resetBoard() {
-  board.fill("");
-}
-
 function checkForWin(board, player) {
   let winStatus = false;
 
@@ -132,7 +143,6 @@ function playerMove(event) {
 }
 
 function drawResult(player, result) {
-  const resultDiv = document.getElementById("resultDiv");
   if (result === "draw") {
     resultDiv.textContent = "It's a draw!";
     resultDiv.style.display = "flex";
@@ -149,11 +159,24 @@ function drawResult(player, result) {
   isPlaying = false;
 }
 
-function initialRender(board) {
+function reset() {
+  masterBoard.fill("");
+
+  for (let square of document.getElementsByClassName("boardSquare")) {
+    square.innerHTML = "";
+    square.style.backgroundColor = "white";
+  }
+
+  isPlaying = true;
+  resultDiv.style.display = "none";
+  currentPlayerIndex = 0;
+}
+
+function initialRender() {
   const boardDiv = document.getElementById("gameBoard");
   let counter = 0;
 
-  board.forEach((square) => {
+  masterBoard.forEach(() => {
     const gridItem = document.createElement("div");
 
     gridItem.classList.add("boardSquare");
@@ -164,17 +187,37 @@ function initialRender(board) {
     boardDiv.appendChild(gridItem);
     counter++;
   });
+
+  players.push(new Player("X", 0));
+  players.push(new AIPlayer("O", 1));
+  players[0].name = "Player";
 }
 
-let masterBoard = new Array(9).fill("");
-// let players = [Player("X", 0), AIPlayer("O", 1)];
-//board = ["X", "X", "O", "X", "", "", "O", "", ""];
-let players = [];
-players.push(new Player("X", 0));
-players.push(new AIPlayer("O", 1));
-players[0].name = "Player";
-let currentPlayerIndex = 0;
-let isPlaying = true;
-let difficulty = 0;
+aiSwitch.addEventListener("click", (e) => {
+  if (e.target.textContent === "1 player") {
+    e.target.textContent = "2 player";
+    document.getElementById("player2Div").style.display = "block";
+    players[0].symbol = "X";
+    players[0].repr = "<img src='./images/cat.png'>";
+    players[1] = new Player("O", 1);
+    players[1].repr = "<img src='./images/dog.png'>";
+    playerXButton.style.display = "none";
+    playerOButton.style.display = "none";
+    difficultyButtons.style.display = "none";
+    reset();
+  } else {
+    e.target.textContent = "1 player";
+    document.getElementById("player2Div").value = "";
+    document.getElementById("player2Div").style.display = "none";
+    players[0].symbol = "X";
+    players[1] = new AIPlayer("O", 1);
+    playerXButton.style.display = "block";
+    playerOButton.style.display = "block";
+    playerXButton.classList.add("activated");
+    playerOButton.classList.remove("activated");
+    difficultyButtons.style.display = "flex";
+    reset();
+  }
+});
 
 initialRender(masterBoard);
