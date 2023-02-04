@@ -250,11 +250,19 @@ function playerMove(event) {
     currentPlayerIndex = 1 - currentPlayerIndex;
     currentPlayer = players[currentPlayerIndex];
 
+    if (!result && masterBoard.indexOf("") === -1) {
+      drawResult(null, "draw")
+    }
+
     if (currentPlayer.isAI && isPlaying) {
       currentPlayer.move(masterBoard);
       result = checkForWin(masterBoard, currentPlayer);
       if (result) {
         drawResult(currentPlayer, result);
+      }
+
+      if (!result && masterBoard.indexOf("") === -1) {
+        drawResult(null, "draw")
       }
 
       currentPlayerIndex = 1 - currentPlayerIndex;
