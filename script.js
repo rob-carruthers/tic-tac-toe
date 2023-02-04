@@ -32,6 +32,44 @@ class Player {
   }
 }
 
+class AIPlayer extends Player {
+  constructor(symbol, id) {
+    super(symbol, id);
+    this.isAI = true;
+    this.repr = "<img src='./images/dog.png'>";
+    this.name = "AI";
+  }
+
+  getRandomMove(board) {
+    let possibleMoves = [];
+    for (let i = 0; i < 9; i++) {
+      if (board[i] === "") {
+        possibleMoves.push(i);
+      }
+    }
+
+    const randomMove = Math.floor(Math.random() * possibleMoves.length);
+    return possibleMoves[randomMove];
+  }
+
+  move(board) {
+    let nextMove = -1;
+    if (isPlaying) {
+      switch (difficulty) {
+        case 0:
+          nextMove = this.getRandomMove(board);
+          break;
+      }
+    }
+
+    if (nextMove > -1) {
+      const gridItem = document.getElementById(nextMove);
+      board[nextMove] = this.symbol;
+      gridItem.innerHTML = this.repr;
+    }
+  }
+}
+
 function resetBoard() {
   board.fill("");
 }
@@ -66,18 +104,31 @@ function checkForWin(board, player) {
 }
 
 function playerMove(event) {
-  const currentPlayer = players[currentPlayerIndex];
-  const opponent = players[1 - currentPlayerIndex];
+  let currentPlayer = players[currentPlayerIndex];
+  let opponent = players[1 - currentPlayerIndex];
   if (event.target.textContent === "" && isPlaying) {
     event.target.innerHTML = currentPlayer.repr;
-  }
-  board[event.target.id] = currentPlayer.symbol;
-  let result = checkForWin(board, currentPlayer);
-  if (result) {
-    drawResult(currentPlayer, result);
-  }
+    masterBoard[event.target.id] = currentPlayer.symbol;
+    let result = checkForWin(masterBoard, currentPlayer);
+    if (result) {
+      drawResult(currentPlayer, result);
+    }
 
-  currentPlayerIndex = 1 - currentPlayerIndex;
+    // swap players around
+    currentPlayerIndex = 1 - currentPlayerIndex;
+    currentPlayer = players[currentPlayerIndex];
+    opponent = players[1 - currentPlayerIndex];
+
+    if (currentPlayer.isAI && isPlaying) {
+      currentPlayer.move(masterBoard);
+      result = checkForWin(masterBoard, currentPlayer);
+      if (result) {
+        drawResult(currentPlayer, result);
+      }
+
+      currentPlayerIndex = 1 - currentPlayerIndex;
+    }
+  }
 }
 
 function drawResult(player, result) {
@@ -94,9 +145,11 @@ function drawResult(player, result) {
     resultDiv.textContent = player.name + " wins!";
     resultDiv.style.display = "flex";
   }
+
+  isPlaying = false;
 }
 
-function initialRender() {
+function initialRender(board) {
   const boardDiv = document.getElementById("gameBoard");
   let counter = 0;
 
@@ -113,17 +166,15 @@ function initialRender() {
   });
 }
 
-let board = new Array(9).fill("");
+let masterBoard = new Array(9).fill("");
 // let players = [Player("X", 0), AIPlayer("O", 1)];
 //board = ["X", "X", "O", "X", "", "", "O", "", ""];
 let players = [];
 players.push(new Player("X", 0));
-players.push(new Player("O", 1));
-players[0].name = "Rob";
-players[1].name = "Peter";
-players[1].repr = "<img src='./images/dog.png'>";
+players.push(new AIPlayer("O", 1));
+players[0].name = "Player";
 let currentPlayerIndex = 0;
 let isPlaying = true;
 let difficulty = 0;
 
-initialRender();
+initialRender(masterBoard);
