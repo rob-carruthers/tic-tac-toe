@@ -49,11 +49,12 @@ class Player {
 }
 
 class AIPlayer extends Player {
-  constructor(symbol, id) {
+  constructor(symbol, id, opponent) {
     super(symbol, id);
     this.isAI = true;
     this.repr = "<img src='./images/dog.png'>";
     this.name = "AI";
+    this.opponent = opponent;
   }
 
   getRandomMove(board) {
@@ -68,6 +69,107 @@ class AIPlayer extends Player {
     return possibleMoves[randomMove];
   }
 
+  minimax(board, depth, isMax, AISymbol, playerSymbol) {
+    if (checkForWin(board, this)) {
+      return 100 - depth;
+    }
+
+    if (checkForWin(board, this.opponent)) {
+      return -100 + depth;
+    }
+
+    if (board.indexOf("") === -1) {
+      return 0;
+    }
+
+    if (isMax) {
+      let best = -1000;
+      for (let i = 0; i < 9; i++) {
+        if (board[i] === "") {
+          board[i] = AISymbol;
+          let score = this.minimax(
+            board,
+            depth + 1,
+            !isMax,
+            AISymbol,
+            playerSymbol
+          );
+          board[i] = "";
+          best = Math.max(best, score);
+        }
+      }
+      return best;
+    } else {
+      let best = 1000;
+      for (let i = 0; i < 9; i++) {
+        if (board[i] === "") {
+          board[i] = playerSymbol;
+          let score = this.minimax(
+            board,
+            depth + 1,
+            !isMax,
+            AISymbol,
+            playerSymbol
+          );
+          board[i] = "";
+          best = Math.min(best, score);
+        }
+      }
+      return best;
+    }
+  }
+
+  getMiniMaxMove = (board, AISymbol, playerSymbol) => {
+    let bestScore = -1000;
+    let bestMove = -1;
+    // Race condition 1: If available, AI should choose centre
+    if (board.join("").length === 1 && board[4] != playerSymbol) {
+      bestMove = 4;
+      return bestMove;
+    }
+
+    // Find best move using minimax algorithm (limited by RC2 above if needed)
+    for (let i = 0; i < 9; i++) {
+      if (board[i] === "") {
+        board[i] = AISymbol;
+        let score = this.minimax(board, 0, false, AISymbol, playerSymbol);
+        board[i] = "";
+        if (score > bestScore) {
+          bestScore = score;
+          bestMove = i;
+        }
+      }
+    }
+
+    // Race condition 2: Check whether X has a win on the next turn and should be blocked
+    // (This overrides a previous best move calculated by minimax)
+
+    for (let i = 0; i < 9; i++) {
+      if (board[i] === "") {
+        board[i] = playerSymbol;
+        if (checkForWin(board, this.opponent)) {
+          bestMove = i;
+        }
+        board[i] = "";
+      }
+    }
+
+    // Race condition 3: Prefer AI win over draw or blocking player
+    for (let i = 0; i < 9; i++) {
+      if (board[i] === "") {
+        board[i] = AISymbol;
+
+        if (checkForWin(board, this)) {
+          bestMove = i;
+        }
+
+        board[i] = "";
+      }
+    }
+
+    return bestMove;
+  };
+
   move(board) {
     let nextMove = -1;
     if (isPlaying) {
@@ -75,6 +177,13 @@ class AIPlayer extends Player {
         case 0:
           nextMove = this.getRandomMove(board);
           break;
+        case 2: {
+          nextMove = this.getMiniMaxMove(
+            [...masterBoard],
+            this.symbol,
+            this.opponent.symbol
+          );
+        }
       }
     }
 
@@ -117,7 +226,6 @@ function checkForWin(board, player) {
 
 function playerMove(event) {
   let currentPlayer = players[currentPlayerIndex];
-  let opponent = players[1 - currentPlayerIndex];
   if (event.target.textContent === "" && isPlaying) {
     event.target.innerHTML = currentPlayer.repr;
     masterBoard[event.target.id] = currentPlayer.symbol;
@@ -129,7 +237,6 @@ function playerMove(event) {
     // swap players around
     currentPlayerIndex = 1 - currentPlayerIndex;
     currentPlayer = players[currentPlayerIndex];
-    opponent = players[1 - currentPlayerIndex];
 
     if (currentPlayer.isAI && isPlaying) {
       currentPlayer.move(masterBoard);
@@ -190,7 +297,7 @@ function initialRender() {
   });
 
   players.push(new Player("X", 0));
-  players.push(new AIPlayer("O", 1));
+  players.push(new AIPlayer("O", 1, players[0]));
   players[0].name = "Player";
 }
 
@@ -211,7 +318,7 @@ aiSwitch.addEventListener("click", (e) => {
     document.getElementById("player2Div").value = "";
     document.getElementById("player2Div").style.display = "none";
     players[0].symbol = "X";
-    players[1] = new AIPlayer("O", 1);
+    players[1] = new AIPlayer("O", 1, players[0]);
     playerXButton.style.display = "block";
     playerOButton.style.display = "block";
     playerXButton.classList.add("activated");
