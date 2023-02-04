@@ -2,6 +2,7 @@ const resultDiv = document.getElementById("resultDiv");
 const aiSwitch = document.getElementById("aiSwitch");
 const playerXButton = document.getElementById("playerX");
 const playerOButton = document.getElementById("playerO");
+const resetButton = document.getElementById("resetButton");
 const difficultyButtons = document.getElementById("difficulty");
 const beginnerButton = document.getElementById("beginner");
 const intermediateButton = document.getElementById("intermediate");
@@ -217,6 +218,54 @@ aiSwitch.addEventListener("click", (e) => {
     playerOButton.classList.remove("activated");
     difficultyButtons.style.display = "flex";
     reset();
+  }
+});
+
+resetButton.addEventListener("click", reset);
+
+playerXButton.addEventListener("click", (e) => {
+  if (masterBoard.join("") === "" || !isPlaying) {
+    players[0].symbol = "X";
+    players[0].repr = "<img src='./images/cat.png'>";
+    players[1].symbol = "O";
+    players[1].repr = "<img src='./images/dog.png'>";
+    playerXButton.classList.add("activated");
+    playerOButton.classList.remove("activated");
+  }
+});
+
+playerOButton.addEventListener("click", (e) => {
+  if (masterBoard.join("") === "" || !isPlaying) {
+    players[0].symbol = "O";
+    players[0].repr = "<img src='./images/dog.png'>";
+    players[1].symbol = "X";
+    players[1].repr = "<img src='./images/cat.png'>";
+    playerOButton.classList.add("activated");
+    playerXButton.classList.remove("activated");
+  }
+});
+
+playerXButton.addEventListener("mouseover", (e) => {
+  if (masterBoard.join("") != "" && isPlaying) {
+    e.target.classList.add("disabled");
+  }
+});
+
+playerXButton.addEventListener("mouseout", (e) => {
+  if (masterBoard.join("") != "" && isPlaying) {
+    e.target.classList.remove("disabled");
+  }
+});
+
+playerOButton.addEventListener("mouseover", (e) => {
+  if (masterBoard.join("") != "" && isPlaying) {
+    e.target.classList.add("disabled");
+  }
+});
+
+playerOButton.addEventListener("mouseout", (e) => {
+  if (masterBoard.join("") != "" && isPlaying) {
+    e.target.classList.remove("disabled");
   }
 });
 
