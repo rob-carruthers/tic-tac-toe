@@ -77,7 +77,7 @@ function playerMove(event) {
     drawResult(currentPlayer, result);
   }
 
-  //currentPlayerIndex = 1 - currentPlayerIndex;
+  currentPlayerIndex = 1 - currentPlayerIndex;
 }
 
 function drawResult(player, result) {
@@ -115,10 +115,13 @@ function initialRender() {
 
 let board = new Array(9).fill("");
 // let players = [Player("X", 0), AIPlayer("O", 1)];
-board = ["X", "X", "O", "X", "", "", "O", "", ""];
+//board = ["X", "X", "O", "X", "", "", "O", "", ""];
 let players = [];
 players.push(new Player("X", 0));
+players.push(new Player("O", 1));
 players[0].name = "Rob";
+players[1].name = "Peter";
+players[1].repr = "<img src='./images/dog.png'>";
 let currentPlayerIndex = 0;
 let isPlaying = true;
 let difficulty = 0;
