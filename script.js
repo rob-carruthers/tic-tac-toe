@@ -269,4 +269,25 @@ playerOButton.addEventListener("mouseout", (e) => {
   }
 });
 
+beginnerButton.addEventListener("click", (e) => {
+  e.target.classList.add("activated");
+  masterButton.classList.remove("activated");
+  intermediateButton.classList.remove("activated");
+  difficulty = 0;
+});
+
+intermediateButton.addEventListener("click", (e) => {
+  e.target.classList.add("activated");
+  beginnerButton.classList.remove("activated");
+  masterButton.classList.remove("activated");
+  difficulty = 1;
+});
+
+masterButton.addEventListener("click", (e) => {
+  e.target.classList.add("activated");
+  beginnerButton.classList.remove("activated");
+  intermediateButton.classList.remove("activated");
+  difficulty = 2;
+});
+
 initialRender(masterBoard);
