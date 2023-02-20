@@ -298,9 +298,6 @@ function reset() {
     square.style.backgroundColor = "white";
   }
 
-  player1Name.value = "";
-  player2Name.value = "";
-
   isPlaying = true;
   resultDiv.style.display = "none";
   currentPlayerIndex = 0;
