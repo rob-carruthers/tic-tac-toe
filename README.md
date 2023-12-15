@@ -1,6 +1,8 @@
 # Tic Cat Toe
 
-This was created from scratch using HTML, CSS and JavaScript.
+![image](https://github.com/rob-carruthers/tic-tac-toe/blob/main/images/tic-cat-toe.png?raw=true)
+
+This was created with love from scratch using HTML, CSS and JavaScript. You can play it at [robcarruthers.co.uk](https://robcarruthers.co.uk).
 
 It can be played as a one-player game with an AI opponent, or as a local two-player game.
 
